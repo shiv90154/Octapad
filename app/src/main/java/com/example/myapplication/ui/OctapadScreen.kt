@@ -85,6 +85,10 @@ fun OctapadScreen(soundPool: SoundPool, sounds: List<Int>) {
     var showKitList  by remember { mutableStateOf(false) }
     val scope        = rememberCoroutineScope()
 
+    val padSounds = remember {
+        sounds.toMutableList()
+    }
+
     fun onPadHit(index: Int) {
         scope.launch {
             pressedPads[index] = true
@@ -96,7 +100,8 @@ fun OctapadScreen(soundPool: SoundPool, sounds: List<Int>) {
                 "LATENCY",
                 "Latency = $latency ms"
             )
-            soundPool.play(sounds[index], volume, volume, 1, 0, pitch)
+
+            soundPool.play(padSounds[index], volume, volume, 1, 0, pitch)
             delay(100)
             pressedPads[index] = false
         }
@@ -128,6 +133,51 @@ fun OctapadScreen(soundPool: SoundPool, sounds: List<Int>) {
             index < currentKit         -> currentKit - 1
             currentKit >= kits.size    -> kits.lastIndex
             else                       -> currentKit
+        }
+    }
+
+    fun swapPads(source: Int, target: Int) {
+
+        val temp = padSounds[source - 1]
+
+        padSounds[source - 1] =
+            padSounds[target - 1]
+
+        padSounds[target - 1] =
+            temp
+    }
+
+    fun detectTargetPad(): Int {
+
+        val threshold = 250f
+
+        return when {
+
+            kotlin.math.abs(dragX - pad1X) < threshold &&
+                    kotlin.math.abs(dragY - pad1Y) < threshold -> 1
+
+            kotlin.math.abs(dragX - pad2X) < threshold &&
+                    kotlin.math.abs(dragY - pad2Y) < threshold -> 2
+
+            kotlin.math.abs(dragX - pad3X) < threshold &&
+                    kotlin.math.abs(dragY - pad3Y) < threshold -> 3
+
+            kotlin.math.abs(dragX - pad4X) < threshold &&
+                    kotlin.math.abs(dragY - pad4Y) < threshold -> 4
+
+            kotlin.math.abs(dragX - pad5X) < threshold &&
+                    kotlin.math.abs(dragY - pad5Y) < threshold -> 5
+
+            kotlin.math.abs(dragX - pad6X) < threshold &&
+                    kotlin.math.abs(dragY - pad6Y) < threshold -> 6
+
+            kotlin.math.abs(dragX - pad7X) < threshold &&
+                    kotlin.math.abs(dragY - pad7Y) < threshold -> 7
+
+            kotlin.math.abs(dragX - pad8X) < threshold &&
+                    kotlin.math.abs(dragY - pad8Y) < threshold -> 8
+
+            else -> -1
         }
     }
 
@@ -192,9 +242,20 @@ fun OctapadScreen(soundPool: SoundPool, sounds: List<Int>) {
                             },
 
                             onDragEnd = {
+
+                                targetPad = detectTargetPad()
+
                                 dragVisible = false
-                                showPadMenu = true
+
+                                if (
+                                    targetPad != -1 &&
+                                    targetPad != sourcePad
+                                ) {
+                                    showPadMenu = true
+                                }
                             },
+
+
 
                             onPadPositionChanged = { x, y ->
                                 pad1X = x
@@ -223,8 +284,17 @@ fun OctapadScreen(soundPool: SoundPool, sounds: List<Int>) {
                             },
 
                             onDragEnd = {
+
+                                targetPad = detectTargetPad()
+
                                 dragVisible = false
-                                showPadMenu = true
+
+                                if (
+                                    targetPad != -1 &&
+                                    targetPad != sourcePad
+                                ) {
+                                    showPadMenu = true
+                                }
                             },
 
                             onPadPositionChanged = { x, y ->
@@ -252,8 +322,17 @@ fun OctapadScreen(soundPool: SoundPool, sounds: List<Int>) {
                             },
 
                             onDragEnd = {
+
+                                targetPad = detectTargetPad()
+
                                 dragVisible = false
-                                showPadMenu = true
+
+                                if (
+                                    targetPad != -1 &&
+                                    targetPad != sourcePad
+                                ) {
+                                    showPadMenu = true
+                                }
                             },
 
                             onPadPositionChanged = { x, y ->
@@ -280,8 +359,17 @@ fun OctapadScreen(soundPool: SoundPool, sounds: List<Int>) {
                             },
 
                             onDragEnd = {
+
+                                targetPad = detectTargetPad()
+
                                 dragVisible = false
-                                showPadMenu = true
+
+                                if (
+                                    targetPad != -1 &&
+                                    targetPad != sourcePad
+                                ) {
+                                    showPadMenu = true
+                                }
                             },
 
                             onPadPositionChanged = { x, y ->
@@ -319,8 +407,17 @@ fun OctapadScreen(soundPool: SoundPool, sounds: List<Int>) {
                             },
 
                             onDragEnd = {
+
+                                targetPad = detectTargetPad()
+
                                 dragVisible = false
-                                showPadMenu = true
+
+                                if (
+                                    targetPad != -1 &&
+                                    targetPad != sourcePad
+                                ) {
+                                    showPadMenu = true
+                                }
                             },
 
                             onPadPositionChanged = { x, y ->
@@ -348,8 +445,17 @@ fun OctapadScreen(soundPool: SoundPool, sounds: List<Int>) {
                             },
 
                             onDragEnd = {
+
+                                targetPad = detectTargetPad()
+
                                 dragVisible = false
-                                showPadMenu = true
+
+                                if (
+                                    targetPad != -1 &&
+                                    targetPad != sourcePad
+                                ) {
+                                    showPadMenu = true
+                                }
                             },
 
                             onPadPositionChanged = { x, y ->
@@ -378,8 +484,17 @@ fun OctapadScreen(soundPool: SoundPool, sounds: List<Int>) {
                             },
 
                             onDragEnd = {
+
+                                targetPad = detectTargetPad()
+
                                 dragVisible = false
-                                showPadMenu = true
+
+                                if (
+                                    targetPad != -1 &&
+                                    targetPad != sourcePad
+                                ) {
+                                    showPadMenu = true
+                                }
                             },
 
                             onPadPositionChanged = { x, y ->
@@ -407,8 +522,17 @@ fun OctapadScreen(soundPool: SoundPool, sounds: List<Int>) {
                             },
 
                             onDragEnd = {
+
+                                targetPad = detectTargetPad()
+
                                 dragVisible = false
-                                showPadMenu = true
+
+                                if (
+                                    targetPad != -1 &&
+                                    targetPad != sourcePad
+                                ) {
+                                    showPadMenu = true
+                                }
                             },
 
                             onPadPositionChanged = { x, y ->
@@ -481,6 +605,12 @@ fun OctapadScreen(soundPool: SoundPool, sounds: List<Int>) {
         },
 
         onSwap = {
+
+            swapPads(
+                sourcePad,
+                targetPad
+            )
+
             showPadMenu = false
         },
 

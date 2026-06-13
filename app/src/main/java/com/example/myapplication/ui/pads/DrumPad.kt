@@ -19,7 +19,7 @@ import androidx.compose.ui.unit.dp
 import com.example.myapplication.ui.PadDark
 import com.example.myapplication.ui.PadPressed
 import androidx.compose.foundation.gestures.detectDragGesturesAfterLongPress
-import androidx.compose.ui.input.pointer.consumePositionChange
+
 
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInRoot
@@ -50,11 +50,21 @@ fun DrumPad(
 
             .onGloballyPositioned { coordinates ->
 
+
                 val pos = coordinates.positionInRoot()
 
                 onPadPositionChanged(
                     pos.x,
                     pos.y
+                )
+            }
+
+            .pointerInput(Unit) {
+
+                detectTapGestures(
+                    onTap = {
+                        onPress()
+                    }
                 )
             }
 
