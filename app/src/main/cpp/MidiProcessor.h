@@ -1,3 +1,4 @@
+// MidiProcessor.h
 #pragma once
 
 #include <unordered_map>
@@ -41,5 +42,14 @@ public:
 
     void printMappings();
 
+    // NEW: Control Change (knob/slider) handling
+    void controlChange(
+            int channel,
+            int ccNumber,
+            int ccValue);
+
     std::function<void(int,float)> onPadHit;
+
+    // NEW
+    std::function<void(int,int)> onControlChange;
 };

@@ -11,18 +11,22 @@ fun Pad6(
     onDragStart: () -> Unit,
     onDragMove: (Float, Float) -> Unit,
     onDragEnd: () -> Unit,
-    onPadPositionChanged: (Float, Float) -> Unit
-
+    onPadPositionChanged: (Float, Float) -> Unit,
+    onRecordStart: () -> Unit,
+    onRecordStop: () -> Unit
 ) {
     DrumPad(
         modifier = modifier,
         pressed = pressed,
         padNumber = 6,
         onPress = onPress,
+        ledAtBottom = true,
+        onRecordStart = onRecordStart,
+        onRecordStop = onRecordStop,
+
         onDragStart = onDragStart,
         onDragMove = onDragMove,
         onDragEnd = onDragEnd,
         onPadPositionChanged = onPadPositionChanged
-
     )
 }

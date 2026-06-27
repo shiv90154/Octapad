@@ -1,4 +1,5 @@
 package com.example.myapplication
+
 import android.media.AudioAttributes
 import android.media.SoundPool
 import android.os.Bundle
@@ -12,21 +13,17 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        android.util.Log.d("MIDI_TEST", "APP STARTED")
-        val audioAttributes = AudioAttributes.Builder()
+
+        val attributes = AudioAttributes.Builder()
             .setUsage(AudioAttributes.USAGE_GAME)
             .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
             .build()
 
+        // maxStreams raised so many pads can overlap without cutting each other off
         soundPool = SoundPool.Builder()
-            .setMaxStreams(8)
-            .setAudioAttributes(audioAttributes)
+            .setMaxStreams(16)
+            .setAudioAttributes(attributes)
             .build()
-
-        val midiHelper =
-            MidiManagerHelper(this)
-
-        midiHelper.listDevices()
 
         val sounds = listOf(
             soundPool.load(this, R.raw.pad1, 1),
@@ -39,7 +36,9 @@ class MainActivity : ComponentActivity() {
             soundPool.load(this, R.raw.pad8, 1)
         )
 
-
+        // ── Restore MIDI device connection — this was missing, which is why
+        //    no MIDI_TEST logs appeared and the device was never connected ──
+        MidiManagerHelper(this).listDevices()
 
         setContent { OctapadScreen(soundPool, sounds) }
     }

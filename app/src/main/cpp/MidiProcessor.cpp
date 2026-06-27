@@ -1,3 +1,4 @@
+// MidiProcessor.cpp
 #include "MidiProcessor.h"
 
 #include <iostream>
@@ -8,6 +9,11 @@
 
 extern void sendPadToKotlin(
         int pad);
+
+// NEW
+extern void sendControlChangeToKotlin(
+        int ccNumber,
+        int ccValue);
 
 MidiProcessor::MidiProcessor()
 {
@@ -123,6 +129,31 @@ void MidiProcessor::noteOff(
             << " PAD="
             << pad
             << std::endl;
+}
+
+// ── NEW: Control Change (knobs / sliders) ───────────────────────────────────
+void MidiProcessor::controlChange(
+        int channel,
+        int ccNumber,
+        int ccValue)
+{
+    LOGD(
+            "CC CH=%d NUMBER=%d VALUE=%d",
+            channel,
+            ccNumber,
+            ccValue
+    );
+
+    if (onControlChange)
+    {
+        onControlChange(
+                ccNumber,
+                ccValue);
+    }
+
+    sendControlChangeToKotlin(
+            ccNumber,
+            ccValue);
 }
 
 void MidiProcessor::enableMidiLearn(

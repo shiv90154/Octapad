@@ -1,11 +1,12 @@
-#include <jni.h>
-#include "MidiProcessor.h"
-#include <jni.h>
+// native-lib.cpp
 #include <jni.h>
 #include "MidiProcessor.h"
 
 jclass g_bridgeClass = nullptr;
 jmethodID g_padCallback = nullptr;
+
+// NEW
+jmethodID g_ccCallback = nullptr;
 
 static MidiProcessor midiProcessor;
 
@@ -26,6 +27,23 @@ Java_com_example_myapplication_NativeBridge_sendMidiMessage(
             channel,
             note,
             velocity
+    );
+}
+
+// ── NEW: JNI entry point for Control Change messages ────────────────────────
+extern "C"
+JNIEXPORT void JNICALL
+Java_com_example_myapplication_NativeBridge_sendControlChange(
+        JNIEnv *env,
+        jobject thiz,
+        jint channel,
+        jint ccNumber,
+        jint ccValue)
+{
+    midiProcessor.controlChange(
+            channel,
+            ccNumber,
+            ccValue
     );
 }
 
@@ -58,6 +76,14 @@ jint JNI_OnLoad(
                     "(I)V"
             );
 
+    // NEW: resolve the CC callback method id
+    g_ccCallback =
+            env->GetStaticMethodID(
+                    g_bridgeClass,
+                    "onControlChangeFromNative",
+                    "(II)V"
+            );
+
     return JNI_VERSION_1_6;
 }
 
@@ -83,5 +109,32 @@ void sendPadToKotlin(
             g_bridgeClass,
             g_padCallback,
             pad
+    );
+}
+
+// ── NEW: callback from C++ back to Kotlin for CC messages ──────────────────
+void sendControlChangeToKotlin(
+        int ccNumber,
+        int ccValue)
+{
+    if (!g_vm ||
+        !g_bridgeClass ||
+        !g_ccCallback)
+    {
+        return;
+    }
+
+    JNIEnv* env = nullptr;
+
+    g_vm->AttachCurrentThread(
+            &env,
+            nullptr
+    );
+
+    env->CallStaticVoidMethod(
+            g_bridgeClass,
+            g_ccCallback,
+            ccNumber,
+            ccValue
     );
 }
